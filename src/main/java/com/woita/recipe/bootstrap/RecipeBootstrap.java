@@ -4,10 +4,12 @@ import com.woita.recipe.model.*;
 import com.woita.recipe.repositories.CategoryRepository;
 import com.woita.recipe.repositories.RecipeRepository;
 import com.woita.recipe.repositories.UnitOfMeasureRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.Optional;
 /**
  * @author mcbrydr on 16/09/19
  */
+@Slf4j
 @Component
 public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
@@ -30,12 +33,14 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
     }
 
     @Override
+    @Transactional
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         recipeRepository.saveAll(getRecipes());
     }
 
     private List<Recipe> getRecipes() {
-        List<Recipe> recipes = new ArrayList<Recipe>(1);
+        log.debug("getRecipes called");
+        List<Recipe> recipes = new ArrayList<>(1);
 
         // get Unit of Measures
         Optional<UnitOfMeasure> eachUomOptional = unitOfMeasureRepository.findByDescription("Each");
@@ -132,6 +137,7 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
         guacamoleRecipe.getCategories().add(mexicanCategory);
         guacamoleRecipe.getCategories().add(quickCategory);
 
+        log.debug("added guacamole recipe to the list of all recipes");
         recipes.add(guacamoleRecipe);
 
         return recipes;
