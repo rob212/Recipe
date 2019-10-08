@@ -36,4 +36,4 @@ jobs:
       - run: mvn integration-test
 
       - store_test_results:
-          path: test-results
+          path: target/failsafe-reports/failsafe-summary.xml
